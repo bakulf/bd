@@ -10,10 +10,8 @@ require 'socket'
 
 class BdUtilsBase
   attr_accessor :inputs
-end
 
-class BdUtilsTime < BdUtilsBase
-  def run
+  def usocket(what)
     begin
       socket = UNIXSocket.open BdUtils::USOCKET_FILE
       return false if socket == -1
@@ -21,13 +19,44 @@ class BdUtilsTime < BdUtilsBase
       return false
     end
 
-    socket.write "time"
-    return true
+    socket.write what
+    return
+  end
+end
+
+class BdUtilsTime < BdUtilsBase
+  def run
+    return usocket "time"
+  end
+end
+
+class BdUtilsBattery < BdUtilsBase
+  def run
+    charging = false
+    capacity = ''
+    time = ''
+    output = ""
+
+    IO.popen("acpitool -b") do |a| output += a.read end
+    output.split("\n").each do |line|
+      next unless line.include? ':'
+
+      parts = line.split(':', 2)
+      parts = parts[1].strip.split(',')
+      return if parts.length < 3
+
+      charging = parts[0].strip == 'Charging'
+      capacity = parts[1].strip
+      time = parts[2].strip
+    end
+
+    return usocket "notify #{charging ? "Charging" : "Discharging" }, #{capacity}, #{time}"
   end
 end
 
 class BdUtils
-  LIST = [ { :cmd => 'time', :class => BdUtilsTime } ]
+  LIST = [ { :cmd => 'time', :class => BdUtilsTime },
+           { :cmd => 'battery', :class => BdUtilsBattery }, ]
   USOCKET_FILE = '/tmp/bterm.socket'
 end
 
