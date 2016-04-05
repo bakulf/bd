@@ -26,7 +26,7 @@ end
 
 class BdUtilsTime < BdUtilsBase
   def run
-    return usocket "time"
+    return usocket "notify #{Time.now.strftime("%a %b %d %Y %H:%M:%S")}"
   end
 end
 
