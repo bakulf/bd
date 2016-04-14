@@ -4,12 +4,22 @@ require 'libnotify'
 
 @notifyWarning = false
 @notifyCritical = false
+@n = nil
+
+def close_notify()
+  unless @n.nil?
+    @n.close
+    @n = nil
+  end
+end
 
 def notify(level, battery, time)
   @bd.warning "Battery", true
-  Libnotify.show(:summary => "Battery #{level}",
-                 :body => "Battery level: #{battery}, Time: #{time}",
-                 :urgency => level == 'Critical' ? :critical : :normal)
+  close_notify
+  @n = Libnotify.new(:summary => "Battery #{level}",
+                     :body => "Battery level: #{battery}, Time: #{time}",
+                     :urgency => level == 'Critical' ? :critical : :normal)
+  @n.update
 end
 
 def magic
@@ -24,11 +34,11 @@ def magic
 
     parts = line.split(':', 2)
     parts = parts[1].strip.split(',')
-    return if parts.length < 3
+    return if parts.length < 2
 
-    charging = parts[0].strip == 'Charging'
+    charging = parts[0].strip == 'Charging' || parts[0].strip == 'Full'
     capacity = parts[1].strip
-    time = parts[2].strip
+    time = parts[2].strip if parts.length > 2
   end
 
   @bd.add_tooltip("Battery", "#{charging ? "Charging" : "Discharging" }, #{capacity}, #{time}")
@@ -36,6 +46,7 @@ def magic
   if charging == true
     @bd.warning "Battery", false
     @notifyWarning = @notifyCritical = false
+    close_notify
     return
   end
 
