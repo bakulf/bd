@@ -42,15 +42,10 @@ class BdUtilsBattery < BdUtilsBase
       next unless line.include? ':'
 
       parts = line.split(':', 2)
-      parts = parts[1].strip.split(',')
-      return if parts.length < 3
-
-      charging = parts[0].strip == 'Charging'
-      capacity = parts[1].strip
-      time = parts[2].strip
+      usocket "notify #{parts[1].strip}"
+      break
     end
 
-    return usocket "notify #{charging ? "Charging" : "Discharging" }, #{capacity}, #{time}"
   end
 end
 
@@ -71,6 +66,8 @@ opts = OptionParser.new do |opts|
   opts.separator "Operations:"
   opts.separator "- time"
   opts.separator "  Show the date/time"
+  opts.separator "- battery"
+  opts.separator "  Show the battery level"
 
   opts.separator ""
   opts.separator "BSD license - Andrea Marchesini <baku@ippolita.net>"

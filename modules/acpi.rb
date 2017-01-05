@@ -14,7 +14,6 @@ def close_notify()
 end
 
 def notify(level, battery, time)
-  @bd.warning "Battery", true
   close_notify
   @n = Libnotify.new(:summary => "Battery #{level}",
                      :body => "Battery level: #{battery}, Time: #{time}",
@@ -44,7 +43,6 @@ def magic
   @bd.add_tooltip("Battery", "#{charging ? "Charging" : "Discharging" }, #{capacity}, #{time}")
 
   if charging == true
-    @bd.warning "Battery", false
     @notifyWarning = @notifyCritical = false
     close_notify
     return

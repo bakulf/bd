@@ -4,11 +4,10 @@
   bd - my deamon
 =end
 
-require 'gtk2'
+require 'gtk3'
 
 class Bd
   def init
-    @warnings = {}
     @tooltips = {}
     create_icon
     load_modules
@@ -18,28 +17,19 @@ class Bd
     Gtk.main
   end
 
-  def warning(what, value)
-    @warnings[what] = value
-
-    warning = false
-    @warnings.each do |k, v| warning = warning || v end
-
-    @si.blinking = warning
-  end
-
   def add_tooltip(key, value)
     @tooltips[key] = value
 
     tooltip = []
     @tooltips.each do |k, v| tooltip.push("#{k}: #{v}") end
-    @si.tooltip = tooltip.join(", ")
+    @si.tooltip_text = tooltip.join(", ")
   end
 
 private
   def create_icon
     @si = Gtk::StatusIcon.new
     @si.pixbuf = Gdk::Pixbuf.new('/usr/share/pixmaps/bd/bd.svg')
-    @si.tooltip = ""
+    @si.tooltip_text = ""
   end
 
   def load_modules
