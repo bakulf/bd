@@ -6,7 +6,7 @@ ICON_FILE = bd.svg
 BIN_NAME = bd
 
 BINUTILS_FILE = bdutils.rb
-BINUTILS_NAME = bd
+BINUTILS_NAME = bdutils
 
 install:
 	@echo "I guess you want to install some module in ~/.bd"
