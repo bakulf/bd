@@ -52,7 +52,7 @@ end
 class BdUtils
   LIST = [ { :cmd => 'time', :class => BdUtilsTime },
            { :cmd => 'battery', :class => BdUtilsBattery }, ]
-  USOCKET_FILE = '/tmp/bterm.socket'
+  USOCKET_FILE = '/var/run/bterm/bterm.socket'
 end
 
 # a description of what this app can do:

@@ -28,7 +28,7 @@ class Bd
 private
   def create_icon
     @si = Gtk::StatusIcon.new
-    @si.pixbuf = Gdk::Pixbuf.new('/usr/share/pixmaps/bd/bd.svg')
+    @si.pixbuf = GdkPixbuf::Pixbuf.new(:file => '/usr/share/pixmaps/bd/bd.svg')
     @si.tooltip_text = ""
   end
 
